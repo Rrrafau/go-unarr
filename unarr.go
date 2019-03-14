@@ -13,6 +13,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strconv"
 	"time"
 	"unsafe"
 )
@@ -263,7 +264,8 @@ func (a *Archive) List() (contents []string, err error) {
 		}
 
 		name := a.Name()
-		contents = append(contents, name)
+		size := strconv.Itoa(a.Size())
+		contents = append(contents, name + " (" + size + ") ")
 	}
 
 	return
