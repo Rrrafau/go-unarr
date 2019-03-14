@@ -26,6 +26,11 @@ type Archive struct {
 	archive *C.ar_archive
 }
 
+type Item struct {
+	Path string
+	Size int64
+}
+
 func ByteCountDecimal(b int64) string {
 	const unit = 1000
 	if b < unit {
@@ -284,7 +289,7 @@ func (a *Archive) List() (contents []string, err error) {
 }
 
 // List lists the contents of archive
-func (a *Archive) ListWithSize() (contents []string, err error) {
+func (a *Archive) ListWithDetails() (contents []Item, err error) {
 	for {
 		e := a.Entry()
 		if e != nil {
@@ -296,9 +301,9 @@ func (a *Archive) ListWithSize() (contents []string, err error) {
 			return
 		}
 
-		name := a.Name()
-		size := ByteCountDecimal(int64(a.Size()))
-		contents = append(contents, name + " (" + size + ") ")
+		item := Item{Path: a.Name(), Size: int64(a.Size())}
+
+		contents = append(contents, item)
 	}
 
 	return
