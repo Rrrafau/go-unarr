@@ -277,9 +277,30 @@ func (a *Archive) List() (contents []string, err error) {
 		}
 
 		name := a.Name()
+		contents = append(contents, name)
+	}
+
+	return
+}
+
+// List lists the contents of archive
+func (a *Archive) ListWithSize() (contents []string, err error) {
+	for {
+		e := a.Entry()
+		if e != nil {
+			if e == io.EOF {
+				break
+			}
+
+			err = e
+			return
+		}
+
+		name := a.Name()
 		size := ByteCountDecimal(int64(a.Size()))
 		contents = append(contents, name + " (" + size + ") ")
 	}
 
 	return
 }
+
