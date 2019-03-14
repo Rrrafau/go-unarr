@@ -9,11 +9,11 @@ import "C"
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"strconv"
 	"time"
 	"unsafe"
 )
@@ -24,6 +24,19 @@ type Archive struct {
 	stream *C.ar_stream
 	// C archive struct
 	archive *C.ar_archive
+}
+
+func ByteCountBinary(b int64) string {
+	const unit = 1024
+	if b < unit {
+		return fmt.Sprintf("%d B", b)
+	}
+	div, exp := int64(unit), 0
+	for n := b / unit; n >= unit; n /= unit {
+		div *= unit
+		exp++
+	}
+	return fmt.Sprintf("%.1f %ciB", float64(b)/float64(div), "KMGTPE"[exp])
 }
 
 // NewArchive returns new unarr Archive
@@ -264,7 +277,7 @@ func (a *Archive) List() (contents []string, err error) {
 		}
 
 		name := a.Name()
-		size := strconv.Itoa(a.Size())
+		size := ByteCountBinary(int64(a.Size()))
 		contents = append(contents, name + " (" + size + ") ")
 	}
 
