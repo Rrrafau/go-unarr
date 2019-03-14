@@ -26,8 +26,8 @@ type Archive struct {
 	archive *C.ar_archive
 }
 
-func ByteCountBinary(b int64) string {
-	const unit = 1024
+func ByteCountDecimal(b int64) string {
+	const unit = 1000
 	if b < unit {
 		return fmt.Sprintf("%d B", b)
 	}
@@ -36,7 +36,7 @@ func ByteCountBinary(b int64) string {
 		div *= unit
 		exp++
 	}
-	return fmt.Sprintf("%.1f %ciB", float64(b)/float64(div), "KMGTPE"[exp])
+	return fmt.Sprintf("%.1f %cB", float64(b)/float64(div), "kMGTPE"[exp])
 }
 
 // NewArchive returns new unarr Archive
@@ -277,7 +277,7 @@ func (a *Archive) List() (contents []string, err error) {
 		}
 
 		name := a.Name()
-		size := ByteCountBinary(int64(a.Size()))
+		size := ByteCountDecimal(int64(a.Size()))
 		contents = append(contents, name + " (" + size + ") ")
 	}
 
